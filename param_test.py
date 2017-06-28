@@ -1,6 +1,6 @@
 from unittest import TestLoader, TestSuite, TestCase
 import unittest
-from HTMLTestRunner import HTMLTestRunner
+from HTMLTestRunner import HTMLTestRunner, HTMLTestCase
 import datetime
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
@@ -31,12 +31,24 @@ class ParametrizedTestCase(unittest.TestCase):
             suite.addTest(testcase_klass(name, param=param))
         return suite
 
-class PythonTest(ParametrizedTestCase):
+class PythonTest(ParametrizedTestCase, HTMLTestCase):
     def setUp(self):
         self.driver = webdriver.Chrome()
+        self.screenshot = []
 
     def tearDown(self):
         self.driver.close()
+
+    def save_screenshot(self, filename):
+        path = SCREENSHOT_DIR+"/"+filename
+        self.driver.save_screenshot(path)
+        self.screenshot.append(path)
+
+    def to_html(self):
+        img = ""
+        for screen in self.screenshot:
+            img += """ <div><img src="%s" /></div> """ % screen
+        return img
 
     def test_site(self):
         driver = self.driver
@@ -44,7 +56,7 @@ class PythonTest(ParametrizedTestCase):
         urlobj = urlparse.urlparse(url)
         screenshot_file = urlobj.hostname + re.sub(r"[/:%]", "_", urlobj.path)
         driver.get(url)
-        driver.save_screenshot(screenshot_file+".png")
+        self.save_screenshot(screenshot_file+".png")
 
 if __name__ == "__main__":
 

@@ -97,6 +97,9 @@ import time
 import unittest
 from xml.sax import saxutils
 
+class HTMLTestCase(unittest.TestCase):
+    def to_html(self):
+        return ""
 
 # ------------------------------------------------------------------------
 # The redirectors below are used to capture output during testing. Output
@@ -470,6 +473,7 @@ a.popup_link:hover {
         %(status)s</a>
 
     <div id='div_%(tid)s' class="popup_window">
+%(img)s
         <div style='text-align: right; color:red;cursor:pointer'>
         <a onfocus='this.blur();' onclick="document.getElementById('div_%(tid)s').style.display = 'none' " >
            [x]</a>
@@ -482,15 +486,16 @@ a.popup_link:hover {
 
     </td>
 </tr>
-""" # variables: (tid, Class, style, desc, status)
+""" # variables: (tid, Class, style, desc, status, img)
 
 
     REPORT_TEST_NO_OUTPUT_TMPL = r"""
 <tr id='%(tid)s' class='%(Class)s'>
     <td class='%(style)s'><div class='testcase'>%(desc)s</div></td>
-    <td colspan='5' align='center'>%(status)s</td>
+    <td colspan='5' align='center'>%(status)s
+%(img)s
 </tr>
-""" # variables: (tid, Class, style, desc, status)
+""" # variables: (tid, Class, style, desc, status, img)
 
 
     REPORT_TEST_OUTPUT_TMPL = r"""
@@ -778,11 +783,16 @@ class HTMLTestRunner(Template_mixin):
             output = saxutils.escape(uo+ue),
         )
 
+        img = ''
+        if isinstance(t, HTMLTestCase):
+            img = t.to_html()
+        print >>sys.stderr, str(t), t.screenshot, img
         row = tmpl % dict(
             tid = tid,
             Class = (n == 0 and 'hiddenRow' or 'none'),
             style = n == 2 and 'errorCase' or (n == 1 and 'failCase' or 'none'),
             desc = desc,
+            img = img,
             script = script,
             status = self.STATUS[n],
         )
