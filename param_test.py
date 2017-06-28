@@ -1,8 +1,10 @@
 from unittest import TestLoader, TestSuite, TestCase
 import unittest
 from HTMLTestRunner import HTMLTestRunner, HTMLTestCase
+from ParametrizedTestCase import ParametrizedTestCase
 import datetime
 from selenium import webdriver
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 import os, re
 import traceback
@@ -10,28 +12,10 @@ import urlparse
 
 SCREENSHOT_DIR = "screenshot"
 
-# http://eli.thegreenplace.net/2011/08/02/python-unit-testing-parametrized-test-cases
-class ParametrizedTestCase(unittest.TestCase):
-    """ TestCase classes that want to be parametrized should
-        inherit from this class.
+class WebTest(ParametrizedTestCase, HTMLTestCase):
+    """ browse page and take screenshot
     """
-    def __init__(self, methodName='runTest', param=None):
-        super(ParametrizedTestCase, self).__init__(methodName)
-        self.param = param
 
-    @staticmethod
-    def parametrize(testcase_klass, param=None):
-        """ Create a suite containing all tests taken from the given
-            subclass, passing them the parameter 'param'.
-        """
-        testloader = unittest.TestLoader()
-        testnames = testloader.getTestCaseNames(testcase_klass)
-        suite = unittest.TestSuite()
-        for name in testnames:
-            suite.addTest(testcase_klass(name, param=param))
-        return suite
-
-class PythonTest(ParametrizedTestCase, HTMLTestCase):
     def setUp(self):
         self.driver = webdriver.Chrome()
         self.screenshot = []
@@ -50,13 +34,29 @@ class PythonTest(ParametrizedTestCase, HTMLTestCase):
             img += """ <div><img src="%s" /></div> """ % screen
         return img
 
-    def test_site(self):
+class TopBottomWebTest(WebTest):
+    # sample
+    def test_top(self):
+        """ top of page
+        """
         driver = self.driver
         url = self.param['url']
         urlobj = urlparse.urlparse(url)
         screenshot_file = urlobj.hostname + re.sub(r"[/:%]", "_", urlobj.path)
         driver.get(url)
         self.save_screenshot(screenshot_file+".png")
+
+    # sample
+    def test_bottom(self):
+        """ bottom of page
+        """
+        driver = self.driver
+        url = self.param['url']
+        urlobj = urlparse.urlparse(url)
+        screenshot_file = urlobj.hostname + re.sub(r"[/:%]", "_", urlobj.path)
+        driver.get(url)
+        ActionChains(driver).send_keys(Keys.CONTROL+Keys.END).perform()
+        self.save_screenshot(screenshot_file+"_bottom.png")
 
 if __name__ == "__main__":
 
@@ -74,8 +74,8 @@ if __name__ == "__main__":
             loader = TestLoader()
             suite = TestSuite()
             for url in urllist:
-                suite.addTest(ParametrizedTestCase.parametrize(PythonTest, param={"url": url}))
-            runner = HTMLTestRunner(stream = output, verbosity = 1, title="WebTest")
+                suite.addTest(ParametrizedTestCase.parametrize(TopBottomWebTest, param={"url": url}))
+            runner = HTMLTestRunner(stream = output, verbosity = 1, title="WebTest", show_mode=HTMLTestRunner.SHOW_ALL)
             runner.run(suite)
             print filename
     except:

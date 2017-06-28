@@ -96,6 +96,7 @@ import sys
 import time
 import unittest
 from xml.sax import saxutils
+from ParametrizedTestCase import ParametrizedTestCase
 
 class HTMLTestCase(unittest.TestCase):
     def to_html(self):
@@ -294,11 +295,13 @@ function showOutput(id, name) {
 %(heading)s
 %(report)s
 %(ending)s
-
+<script>
+showCase(%(show_mode)d);
+</script>
 </body>
 </html>
 """
-    # variables: (title, generator, stylesheet, heading, report, ending)
+    # variables: (title, generator, stylesheet, heading, report, ending, show_mode)
 
 
     # ------------------------------------------------------------------------
@@ -467,13 +470,11 @@ a.popup_link:hover {
 <tr id='%(tid)s' class='%(Class)s'>
     <td class='%(style)s'><div class='testcase'>%(desc)s</div></td>
     <td colspan='5' align='center'>
-
     <!--css div popup start-->
     <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_%(tid)s')" >
         %(status)s</a>
-
+    %(img)s
     <div id='div_%(tid)s' class="popup_window">
-%(img)s
         <div style='text-align: right; color:red;cursor:pointer'>
         <a onfocus='this.blur();' onclick="document.getElementById('div_%(tid)s').style.display = 'none' " >
            [x]</a>
@@ -610,9 +611,11 @@ class _TestResult(TestResult):
 
 
 class HTMLTestRunner(Template_mixin):
-    """
-    """
-    def __init__(self, stream=sys.stdout, verbosity=1, title=None, description=None):
+    SHOW_SUMMARY = 0
+    SHOW_FAILED = 1
+    SHOW_ALL = 2
+
+    def __init__(self, stream=sys.stdout, verbosity=1, title=None, description=None, show_mode=SHOW_SUMMARY):
         self.stream = stream
         self.verbosity = verbosity
         if title is None:
@@ -625,7 +628,7 @@ class HTMLTestRunner(Template_mixin):
             self.description = description
 
         self.startTime = datetime.datetime.now()
-
+        self.show_mode = show_mode
 
     def run(self, test):
         "Run the given test case or test suite."
@@ -681,6 +684,7 @@ class HTMLTestRunner(Template_mixin):
         heading = self._generate_heading(report_attrs)
         report = self._generate_report(result)
         ending = self._generate_ending()
+        show_mode = self.show_mode
         output = self.HTML_TMPL % dict(
             title = saxutils.escape(self.title),
             generator = generator,
@@ -688,6 +692,7 @@ class HTMLTestRunner(Template_mixin):
             heading = heading,
             report = report,
             ending = ending,
+            show_mode = show_mode,
         )
         self.stream.write(output.encode('utf8'))
 
@@ -762,6 +767,9 @@ class HTMLTestRunner(Template_mixin):
         name = t.id().split('.')[-1]
         doc = t.shortDescription() or ""
         desc = doc and ('%s: %s' % (name, doc)) or name
+        if isinstance(t, ParametrizedTestCase):
+            desc += "<br/>" + str(t.param)
+
         tmpl = has_output and self.REPORT_TEST_WITH_OUTPUT_TMPL or self.REPORT_TEST_NO_OUTPUT_TMPL
 
         # o and e should be byte string because they are collected from stdout and stderr?
@@ -786,7 +794,7 @@ class HTMLTestRunner(Template_mixin):
         img = ''
         if isinstance(t, HTMLTestCase):
             img = t.to_html()
-        print >>sys.stderr, str(t), t.screenshot, img
+        #print >>sys.stderr, str(t), t.screenshot, img
         row = tmpl % dict(
             tid = tid,
             Class = (n == 0 and 'hiddenRow' or 'none'),
