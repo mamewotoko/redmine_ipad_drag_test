@@ -17,7 +17,7 @@ import urlparse
 
 SCREENSHOT_DIR = "screenshot"
 
-class WebTest(ParametrizedTestCase, HTMLTestCase):
+class WebTestCase(ParametrizedTestCase, HTMLTestCase):
     """ browse page and take screenshot
     """
 
@@ -39,7 +39,10 @@ class WebTest(ParametrizedTestCase, HTMLTestCase):
         self.driver.save_screenshot(path)
         self.screenshot.append(path)
 
-    def to_html(self):
+    def desc_html(self):
+        return "<br/>" + str(self.param)
+
+    def result_html(self):
         if not hasattr(self, 'screenshot'):
             return "no screenshot"
 
@@ -48,7 +51,7 @@ class WebTest(ParametrizedTestCase, HTMLTestCase):
             img += """ <div><img src="%s" /></div> """ % screen
         return img
 
-class TopBottomWebTest(WebTest):
+class TopBottomWebTestCase(WebTestCase):
     # sample
     def test_top(self):
         """ top of page
@@ -69,7 +72,7 @@ class TopBottomWebTest(WebTest):
         urlobj = urlparse.urlparse(url)
         screenshot_file = urlobj.hostname + re.sub(r"[/:%]", "_", urlobj.path)
         driver.get(url)
-        ActionChains(driver).send_keys(Keys.CONTROL+Keys.END).perform()
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         self.save_screenshot(screenshot_file+"_bottom.png")
 
 if __name__ == "__main__":
@@ -95,7 +98,7 @@ if __name__ == "__main__":
             loader = TestLoader()
             suite = TestSuite()
             for (url, user_agent) in itertools.product(params["url"], params["user_agent"]):
-                suite.addTest(ParametrizedTestCase.parametrize(TopBottomWebTest, param={"url": url, "user_agent": user_agent}))
+                suite.addTest(ParametrizedTestCase.parametrize(TopBottomWebTestCase, param={"url": url, "user_agent": user_agent}))
             runner = HTMLTestRunner(stream = output, verbosity = 1, title="WebTest", show_mode=HTMLTestRunner.SHOW_ALL)
             runner.run(suite)
             print filename
