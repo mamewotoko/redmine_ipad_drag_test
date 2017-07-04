@@ -15,6 +15,8 @@ class PythonTest(unittest.TestCase):
         self.driver.close()
 
     def test_site(self):
+        """ browse python.org and take screenshot named "screenshot0.png"
+        """
         driver = self.driver
         driver.get("http://www.python.org")
         driver.save_screenshot('screenshot0.png')
