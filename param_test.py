@@ -1,11 +1,16 @@
 from unittest import TestLoader, TestSuite, TestCase
 import unittest
+import shutil
+import itertools
+import time
 from HTMLTestRunner import HTMLTestRunner, HTMLTestCase
 from ParametrizedTestCase import ParametrizedTestCase
 import datetime
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.options import Options
+
 import os, re
 import traceback
 import urlparse
@@ -17,18 +22,27 @@ class WebTest(ParametrizedTestCase, HTMLTestCase):
     """
 
     def setUp(self):
-        self.driver = webdriver.Chrome()
+        if len(self.param['user_agent']) > 0:
+            opts = Options()
+            opts.add_argument("user-agent="+self.param['user_agent'])
+            self.driver = webdriver.Chrome(chrome_options=opts)
+        else:
+            self.driver = webdriver.Chrome()
+            
         self.screenshot = []
 
     def tearDown(self):
         self.driver.close()
 
     def save_screenshot(self, filename):
-        path = SCREENSHOT_DIR+"/"+filename
+        path = "%s/%d_%s" % (SCREENSHOT_DIR, int(time.time()), filename)
         self.driver.save_screenshot(path)
         self.screenshot.append(path)
 
     def to_html(self):
+        if not hasattr(self, 'screenshot'):
+            return "no screenshot"
+
         img = ""
         for screen in self.screenshot:
             img += """ <div><img src="%s" /></div> """ % screen
@@ -61,20 +75,27 @@ class TopBottomWebTest(WebTest):
 if __name__ == "__main__":
 
     filename = datetime.datetime.now().strftime("%Y%m%d_%H%M%S_report.html")
-    urllist = [
-        "http://www.google.co.jp", 
-        "http://www.asahi.com"
-    ]
+    
+    params = {
+        "url": [
+            #"http://www.google.co.jp", 
+            "http://www.asahi.com"
+        ],
+        "user_agent": [
+            "",
+            "Mozilla/5.0 (Linux; Android 4.1.2; SHL21 Build/S4011) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.83 Mobile Safari/537.36"
+        ]
+    }
 
     try:
         if os.path.exists(SCREENSHOT_DIR):
-            os.removedirs(SCREENSHOT_DIR)
+            shutil.rmtree(SCREENSHOT_DIR)
         os.makedirs(SCREENSHOT_DIR)
         with open(filename, "wb") as output:
             loader = TestLoader()
             suite = TestSuite()
-            for url in urllist:
-                suite.addTest(ParametrizedTestCase.parametrize(TopBottomWebTest, param={"url": url}))
+            for (url, user_agent) in itertools.product(params["url"], params["user_agent"]):
+                suite.addTest(ParametrizedTestCase.parametrize(TopBottomWebTest, param={"url": url, "user_agent": user_agent}))
             runner = HTMLTestRunner(stream = output, verbosity = 1, title="WebTest", show_mode=HTMLTestRunner.SHOW_ALL)
             runner.run(suite)
             print filename

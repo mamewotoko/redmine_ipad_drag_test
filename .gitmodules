@@ -1,0 +1,3 @@
+[submodule "libs/HTMLTestRunner"]
+	path = libs/HTMLTestRunner
+	url = git@github.com:mamewotoko/HTMLTestRunner.git
