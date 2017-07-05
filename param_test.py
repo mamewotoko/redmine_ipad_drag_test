@@ -88,7 +88,7 @@ if __name__ == "__main__":
         ],
         "user_agent": [
             ("", None),
-            ("Mozilla/5.0 (Linux; Android 4.1.2; SHL21 Build/S4011) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.83 Mobile Safari/537.36", (400, 600))
+            ("Mozilla/5.0 (Linux; Android 4.1.2; SHL21 Build/S4011) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.83 Mobile Safari/537.36", (480, 640))
         ]
     }
 
