@@ -22,10 +22,12 @@ class WebTestCase(ParametrizedTestCase, HTMLTestCase):
     """
 
     def setUp(self):
-        if len(self.param['user_agent']) > 0:
+        user_agent, dim = self.param['user_agent']
+        if len(user_agent) > 0:
             opts = Options()
-            opts.add_argument("user-agent="+self.param['user_agent'])
+            opts.add_argument("user-agent="+user_agent)
             self.driver = webdriver.Chrome(chrome_options=opts)
+            self.driver.set_window_size(dim[0], dim[1])
         else:
             self.driver = webdriver.Chrome()
             
@@ -85,8 +87,8 @@ if __name__ == "__main__":
             "http://www.asahi.com"
         ],
         "user_agent": [
-            "",
-            "Mozilla/5.0 (Linux; Android 4.1.2; SHL21 Build/S4011) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.83 Mobile Safari/537.36"
+            ("", None),
+            ("Mozilla/5.0 (Linux; Android 4.1.2; SHL21 Build/S4011) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.83 Mobile Safari/537.36", (400, 600))
         ]
     }
 
