@@ -1,6 +1,15 @@
 selenium_app
 ============
 
+Prepare
+-------
+* install dependencies
+  * Mac
+
+```
+brew install selenium-server-standalone chromedriver
+```
+
 Run
 ---
 * simple test
