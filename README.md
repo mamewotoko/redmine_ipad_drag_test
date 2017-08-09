@@ -1,5 +1,5 @@
-selenium_app
-============
+redmine_ipad_drag_test
+======================
 
 Prepare
 -------
@@ -22,6 +22,13 @@ sh run.sh test.py
 
 ```
 sh run.sh param_test.py
+```
+
+List iOS Simulator
+------------------
+
+```
+xcodebuild -showsdks
 ```
 
 References
