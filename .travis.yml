@@ -11,6 +11,7 @@ python:
   - "2.7"
 before_install:
   - sudo pip install selenium mechanize
+  - python -m pip list
 script:
   - ./init.sh
   - ./run.sh
