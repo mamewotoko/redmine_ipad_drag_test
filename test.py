@@ -80,7 +80,11 @@ class TopBottomWebTestCase(WebTestCase):
         # backlog
         driver.find_element_by_xpath('//*[@id="main-menu"]/ul/li[4]/a').click()
         time.sleep(1)
-    
+        self.save_screenshot(screenshot_file+"2.png")
+
+    def test_backlog():
+        self.login_and_open_backlog()
+        
     def test_dragging_story(self):
         driver = self.driver
         url = 'http://localhost:3001/redmine/rb/taskboards/1'

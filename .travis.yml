@@ -1,0 +1,11 @@
+sudo: required
+services:
+  - docker
+python:
+  - "2.7"
+before_install:
+  - sudo pip install selenium xvfb
+script:
+  - ./init.sh
+  - ./run.sh
+  - ./finalize.sh

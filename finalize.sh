@@ -1,5 +1,5 @@
 #! /bin/bash
-cd redmine/backlogs/
+cd redmine_docker/backlogs/
 docker-compose down
 rm -rf volume
 cd ../..

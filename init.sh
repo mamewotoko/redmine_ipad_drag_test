@@ -2,7 +2,7 @@
 
 set -x
 
-cd redmine/backlogs
+cd redmine_docker/backlogs
 sh init.sh
 docker-compose up -d --build
 echo waiting remine starts
@@ -26,10 +26,10 @@ done
 
 cd ../..
 python mechanize/load_default_setting.py
-sh redmine/backlogs/install.sh
+sh redmine_docker/backlogs/install.sh
 python mechanize/config_task_tracker_workflow.py
 
-cd redmine/backlogs
+cd redmine_docker/backlogs
 docker-compose restart
 
 while true; do
