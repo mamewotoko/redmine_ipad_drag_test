@@ -38,7 +38,7 @@ References
 
 Keywords
 --------
-selenium, python, unittest. HTMLTestRunner, screenshot
+selenium, python, unittest. HTMLTestRunner, screenshot, mechanize
 
 ----
 Takashi Masuyama < mamewotoko@gmail.com >  

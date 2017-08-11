@@ -2,10 +2,11 @@
 # -*- coding: utf-8 -*-
 import mechanize
 import sys
+import config
 
 def load_default_setting():
     br = mechanize.Browser()
-    br.open("http://localhost:3001/redmine_backlogs/")
+    br.open(config.REDMINE_URL)
 
     br.follow_link(text="Sign in")
     br.select_form(nr=1)
@@ -19,7 +20,6 @@ def load_default_setting():
     # select language
     br.submit()
     return True
-
 
 if __name__ == '__main__':
     load_default_setting()
