@@ -11,8 +11,8 @@ services:
 python:
   - "2.7"
 install:
-  - pip install --user selenium mechanize
-  - pip list --user
+  - sudo pip install selenium mechanize
+  - pip list
 script:
   - ./init.sh
   - ./run.sh
