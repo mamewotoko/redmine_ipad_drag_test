@@ -1,6 +1,6 @@
 [submodule "libs/HTMLTestRunner"]
 	path = libs/HTMLTestRunner
-	url = git@github.com:mamewotoko/HTMLTestRunner.git
+	url = https://github.com/mamewotoko/HTMLTestRunner.git
 [submodule "redmine_docker"]
 	path = redmine_docker
 	url = https://github.com/mamewotoko/redmine_docker.git
