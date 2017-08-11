@@ -1,4 +1,5 @@
 sudo: required
+language: python
 addons:
   apt:
     sources:
@@ -9,9 +10,9 @@ services:
   - docker
 python:
   - "2.7"
-before_install:
-  - sudo pip install selenium mechanize
-  - python -m pip list
+install:
+  - pip install --user selenium mechanize
+  - pip list --user
 script:
   - ./init.sh
   - ./run.sh
