@@ -1,10 +1,17 @@
 sudo: required
+addons:
+  apt:
+    sources:
+      - google-chrome
+    packages:
+      - google-chrome-stable
 services:
   - docker
 python:
   - "2.7"
 before_install:
-  - sudo pip install selenium xvfb
+  - sudo pip install selenium
+  - sudo apt-get install 
 script:
   - ./init.sh
   - ./run.sh
