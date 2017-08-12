@@ -10,10 +10,5 @@ services:
   - docker
 python:
   - "2.7"
-install:
-  - pip install selenium mechanize
-  - pip list
 script:
-  - ./init.sh
-  - ./run.sh
-  - ./finalize.sh
+  - ./main.sh
