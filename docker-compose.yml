@@ -1,0 +1,15 @@
+version: '3'
+
+networks:
+  default:
+    external:
+      name: test_default
+services:
+  tester:
+    #image: markadams/chromium-xvfb-py2:latest
+    build:
+      context: ./tester_docker
+    volumes:
+      - ./:/opt/work
+    external_links:
+      - backlogs_redmine_1:redmine
