@@ -1,4 +1,4 @@
-from unittest import TestLoader, TestSuite, TestCase
+from unittest import TestLoader, TestSuite
 import unittest
 import shutil
 import itertools
@@ -11,11 +11,15 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
 
-import os, re
+import os
+import re
+import sys
 import traceback
 import urlparse
 
 SCREENSHOT_DIR = "screenshot"
+REDMINE_URL = 'http://localhost:3001/redmine_backlogs/'
+
 
 class WebTestCase(ParametrizedTestCase, HTMLTestCase):
     """ browse page and take screenshot
@@ -26,7 +30,7 @@ class WebTestCase(ParametrizedTestCase, HTMLTestCase):
         if len(user_agent) > 0:
             opts = Options()
             opts.add_argument("user-agent="+user_agent)
-            self.driver = webdriver.Chrome(chrome_options=opts)
+            self.driver = webdriver.Chrome(chrome_options=opts, service_args=["--verbose", "--log-path=/opt/work/chrome.log"])
             self.driver.set_window_size(dim[0], dim[1])
         else:
             self.driver = webdriver.Chrome()
@@ -56,7 +60,7 @@ class WebTestCase(ParametrizedTestCase, HTMLTestCase):
 class TopBottomWebTestCase(WebTestCase):
     def login_and_open_backlog(self):
         driver = self.driver
-        url = 'http://localhost:3001/redmine/'
+        url = REDMINE_URL
         urlobj = urlparse.urlparse(url)
         screenshot_file = urlobj.hostname + re.sub(r"[/:%]", "_", urlobj.path)
         driver.get(url)
@@ -82,12 +86,12 @@ class TopBottomWebTestCase(WebTestCase):
         time.sleep(1)
         self.save_screenshot(screenshot_file+"2.png")
 
-    def test_backlog():
+    def test_backlog(self):
         self.login_and_open_backlog()
         
     def test_dragging_story(self):
         driver = self.driver
-        url = 'http://localhost:3001/redmine/rb/taskboards/1'
+        url = REDMINE_URL + 'rb/taskboards/1'
 
         urlobj = urlparse.urlparse(url)
         screenshot_file = urlobj.hostname + re.sub(r"[/:%]", "_", urlobj.path)
@@ -108,7 +112,7 @@ class TopBottomWebTestCase(WebTestCase):
     def test_dragging_task(self):
         self.login_and_open_backlog()
         
-        url = 'http://localhost:3001/redmine/rb/taskboards/1'
+        url = REDMINE_URL + 'rb/taskboards/1'
         urlobj = urlparse.urlparse(url)
         screenshot_file = urlobj.hostname + re.sub(r"[/:%]", "_", urlobj.path)
         driver = self.driver
@@ -125,14 +129,13 @@ class TopBottomWebTestCase(WebTestCase):
 
         ok_button.click()
         self.save_screenshot(screenshot_file+".png")
-        ## TODO: add assert
+        ## TODO(add assert)
         task = driver.find_element_by_xpath('//div[@id="issue_6"]')
         target = driver.find_element_by_xpath('//*[@id="2_5"]')
         ActionChains(driver).click_and_hold(task).move_to_element(target).release(target).perform()
         time.sleep(1)
         self.save_screenshot(screenshot_file+".png")
-       
-        
+
 if __name__ == "__main__":
 
     filename = datetime.datetime.now().strftime("%Y%m%d_%H%M%S_report.html")
@@ -146,13 +149,15 @@ if __name__ == "__main__":
     try:
         if os.path.exists(SCREENSHOT_DIR):
             shutil.rmtree(SCREENSHOT_DIR)
+        if 1 < len(sys.argv):
+            REDMINE_URL = sys.argv[1]
         os.makedirs(SCREENSHOT_DIR)
         with open(filename, "wb") as output:
             loader = TestLoader()
             suite = TestSuite()
             for user_agent in params["user_agent"]:
                 suite.addTest(ParametrizedTestCase.parametrize(TopBottomWebTestCase, param={"user_agent": user_agent}))
-            runner = HTMLTestRunner(stream = output, verbosity = 1, title="WebTest", show_mode=HTMLTestRunner.SHOW_ALL)
+            runner = HTMLTestRunner(stream=output, verbosity=1, title="WebTest", show_mode=HTMLTestRunner.SHOW_ALL)
             runner.run(suite)
             print filename
     except:

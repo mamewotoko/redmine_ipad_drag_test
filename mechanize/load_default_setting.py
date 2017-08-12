@@ -10,8 +10,8 @@ def load_default_setting():
 
     br.follow_link(text="Sign in")
     br.select_form(nr=1)
-    br['username'] = 'admin'
-    br['password'] = 'admin'
+    br['username'] = u'admin'
+    br['password'] = u'admin'
     br.submit()
 
     br.follow_link(text="Administration")
@@ -22,6 +22,6 @@ def load_default_setting():
     return True
 
 if __name__ == '__main__':
+    if len(sys.argv) == 2:
+        config.REDMINE_URL = sys.argv[1]
     load_default_setting()
-    
-    

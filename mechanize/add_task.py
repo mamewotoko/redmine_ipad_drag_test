@@ -41,5 +41,7 @@ def add_task():
     br.submit()
     
 if __name__ == '__main__':
+    if len(sys.argv) == 2:
+        config.REDMINE_URL = sys.argv[1]
     add_project()
     add_task()

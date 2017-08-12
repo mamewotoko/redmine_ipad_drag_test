@@ -44,7 +44,9 @@ def config_task_tracker_workflow():
     br.submit()
     
 #    print(br.response().read())    
-    
 
 if __name__ == '__main__':
+    if len(sys.argv) == 2:
+        config.REDMINE_URL = sys.argv[1]
+    
     config_task_tracker_workflow()
