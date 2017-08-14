@@ -61,29 +61,35 @@ class TopBottomWebTestCase(WebTestCase):
     def login_and_open_backlog(self):
         driver = self.driver
         url = REDMINE_URL
-        urlobj = urlparse.urlparse(url)
+        urlobj = urlparse.urlparse(url)       
         screenshot_file = urlobj.hostname + re.sub(r"[/:%]", "_", urlobj.path)
         driver.get(url)
+        time.sleep(3)
+        self.save_screenshot(screenshot_file+".png")
+        
         login_link = driver.find_element_by_xpath('//*[@id="account"]/ul/li[1]/a')
         login_link.click()
+        time.sleep(3)
         username_text = driver.find_element_by_xpath('//*[@id="username"]')
         username_text.send_keys('admin')
         password_text = driver.find_element_by_xpath('//*[@id="password"]')
         password_text.send_keys('admin')
         login_button = driver.find_element_by_xpath('//*[@id="login-form"]/form/table/tbody/tr[4]/td[2]/input')
         login_button.click()
+        time.sleep(3)
 
         body = driver.find_element_by_xpath("//body")
         self.save_screenshot(screenshot_file+".png")
 
         # project test
         driver.find_element_by_xpath('//*[@id="content"]/div[2]/div/ul/li/a').click()
-        time.sleep(1)
+        time.sleep(3)
+
         self.save_screenshot(screenshot_file+"1.png")
 
         # backlog
         driver.find_element_by_xpath('//*[@id="main-menu"]/ul/li[4]/a').click()
-        time.sleep(1)
+        time.sleep(3)
         self.save_screenshot(screenshot_file+"2.png")
 
     def test_backlog(self):
@@ -119,7 +125,7 @@ class TopBottomWebTestCase(WebTestCase):
 
         kanban_link = driver.find_element_by_xpath('//*[@id="main-menu"]/ul/li[5]/a')
         kanban_link.click()
-        time.sleep(1)
+        time.sleep(3)
 
         task_add_button = driver.find_element_by_xpath('//*[@id="swimlane-2"]/td[1]/div/div[1]/span[1]/img')
         task_add_button.click()
@@ -133,7 +139,7 @@ class TopBottomWebTestCase(WebTestCase):
         task = driver.find_element_by_xpath('//div[@id="issue_6"]')
         target = driver.find_element_by_xpath('//*[@id="2_5"]')
         ActionChains(driver).click_and_hold(task).move_to_element(target).release(target).perform()
-        time.sleep(1)
+        time.sleep(3)
         self.save_screenshot(screenshot_file+".png")
 
 if __name__ == "__main__":
