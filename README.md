@@ -1,4 +1,4 @@
-redmine_ipad_drag_test [![Build Status](https://travis-ci.org/mamewotoko/redmine_ipad_drag_test.svg?branch=master)](https://travis-ci.org/mamewotoko/redmine_ipad_drag_test)
+redmine_ipad_drag_test [![Build Status](https://travis-ci.org/mamewotoko/redmine_ipad_drag_test.svg?branch=master)](https://travis-ci.org/mamewotoko/redmine_ipad_drag_test) [![Code Health](https://landscape.io/github/mamewotoko/redmine_ipad_drag_test/master/landscape.svg?style=flat)](https://landscape.io/github/mamewotoko/redmine_ipad_drag_test/master)
 ======================
 
 Prepare
