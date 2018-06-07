@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  mechanize_tester:
+    build:
+      context: .
+    volumes:
+      - .:/opt/work
+    network_mode: host
+    commands: /opt/work/config_task_tracker_workflow.py http://localhost:3000/redmine

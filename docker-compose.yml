@@ -4,8 +4,9 @@ networks:
   default:
     external:
       name: test_default
+
 services:
-  tester:
+  selenium_tester:
     #image: markadams/chromium-xvfb-py2:latest
     build:
       context: ./tester_docker
@@ -13,3 +14,10 @@ services:
       - ./:/opt/work
     external_links:
       - backlogs_redmine_1:redmine
+
+  mechanize_tester:
+    build:
+      context: ./mechanize
+    volumes:
+      - ./mechanize:/opt/work
+
