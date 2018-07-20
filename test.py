@@ -1,4 +1,4 @@
-from unittest import TestLoader, TestSuite
+ofrom unittest import TestLoader, TestSuite
 import unittest
 import shutil
 import itertools
@@ -105,7 +105,7 @@ class TopBottomWebTestCase(WebTestCase):
         self.login_and_open_backlog()
         
         story = driver.find_element_by_xpath('//*[@id="story_1"]/div[1]/div')
-        #target = driver.find_element_by_xpath('//*[@id="stories-for-1"]')
+        # target = driver.find_element_by_xpath('//*[@id="stories-for-1"]')
         target = driver.find_element_by_xpath('//*[@id="stories-for-2"]')
         self.save_screenshot(screenshot_file+"2.png")
 
@@ -113,7 +113,7 @@ class TopBottomWebTestCase(WebTestCase):
         time.sleep(1)
         
         self.save_screenshot(screenshot_file+"3.png")
-        ## TODO: add assert
+        # TODO: add assert
 
     def test_dragging_task(self):
         self.login_and_open_backlog()
@@ -135,7 +135,7 @@ class TopBottomWebTestCase(WebTestCase):
 
         ok_button.click()
         self.save_screenshot(screenshot_file+".png")
-        ## TODO(add assert)
+        # TODO(add assert)
         task = driver.find_element_by_xpath('//div[@id="issue_6"]')
         target = driver.find_element_by_xpath('//*[@id="2_5"]')
         ActionChains(driver).click_and_hold(task).move_to_element(target).release(target).perform()
@@ -165,7 +165,7 @@ if __name__ == "__main__":
                 suite.addTest(ParametrizedTestCase.parametrize(TopBottomWebTestCase, param={"user_agent": user_agent}))
             runner = HTMLTestRunner(stream=output, verbosity=1, title="WebTest", show_mode=HTMLTestRunner.SHOW_ALL)
             runner.run(suite)
-            print filename
+            print(filename)
     except:
         print(traceback.format_exc())
         if os.path.exists(filename):
